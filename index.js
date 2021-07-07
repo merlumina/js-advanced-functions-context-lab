@@ -20,3 +20,57 @@ let allWagesFor = function () {
 
     return payable
 }
+
+let createEmployeeRecord = function (employee) {
+    return {
+        firstName: employee[0],
+        familyName: employee[1],
+        title: employee[2],
+        payPerHour: employee[3],
+        timeInEvents: [],
+        timeOutEvents: []
+    }
+}
+
+let createEmployeeRecords = function (employeeArray) {
+    return employeeArray.map(createEmployeeRecord);
+}
+
+let createTimeInEvent = function (dateStamp) {
+    let [date, hour] = dateStamp.split(' ');
+    this.timeInEvents.push({
+        type: "TimeIn",
+        hour: parseInt(hour),
+        date: date
+    });
+    return this;
+}
+
+let createTimeOutEvent = function (dateStamp) {
+    let [date, hour] = dateStamp.split(' ');
+    this.timeOutEvents.push({
+        type: "TimeOut",
+        hour: parseInt(hour),
+        date: date
+    });
+    return this;
+}
+
+let hoursWorkedOnDate = function (soughtDate) {
+    let timeIn = this.timeInEvents.find((e) => {return e.date === soughtDate}).hour;
+    let timeOut = this.timeOutEvents.find((e) => {return e.date === soughtDate}).hour;
+    return (timeOut - timeIn) / 100;
+}
+
+let wagesEarnedOnDate = function (soughtDate) {
+    return hoursWorkedOnDate.call(this, soughtDate) * this.payPerHour;
+}
+
+let calculatePayroll = function (employeeList) {
+    let allWages = employeeList.reduce(function(memo, e) { return memo + allWagesFor.call(e) }, 0);
+    return allWages;
+}
+
+let findEmployeeByFirstName = function (srcArray, firstName) {
+    return srcArray.find(rec => rec.firstName == firstName);
+}
